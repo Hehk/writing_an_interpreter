@@ -1,0 +1,6 @@
+(library
+ (name monkey)
+ (inline_tests)
+ (libraries base)
+ (preprocess
+  (pps ppx_inline_test ppx_deriving.show ppx_deriving.eq)))
