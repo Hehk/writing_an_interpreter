@@ -1,16 +1,29 @@
 type t =
-  | Ident
+  | Ident of string
   | Int of int
   | Assign
   | Plus
+  | Minus
+  | Divide
+  | Multiply
+  | Equal
+  | NotEqual
+  | Not
+  | Less
+  | Greater
   | Comma
   | Semicolon
   | Lparen
   | Rparen
   | Lbrace
   | Rbrace
-  | Equal
   | Function
   | Let
-  [@@deriving show, eq]
+  | For
+  | True
+  | False
+  | If
+  | Else
+  | Return
+[@@deriving show, eq]
 

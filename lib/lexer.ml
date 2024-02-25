@@ -3,36 +3,8 @@ open Stdio
 
 type state = { code : string; pos : int } [@@deriving show, eq]
 
-type token =
-  | Ident of string
-  | Int of int
-  | Assign
-  | Plus
-  | Minus
-  | Divide
-  | Multiply
-  | Equal
-  | NotEqual
-  | Not
-  | Less
-  | Greater
-  | Comma
-  | Semicolon
-  | Lparen
-  | Rparen
-  | Lbrace
-  | Rbrace
-  | Function
-  | Let
-  | For
-  | True
-  | False
-  | If
-  | Else
-  | Return
+type token_node = { token : Token.t; pos : int; len : int }
 [@@deriving show, eq]
-
-type token_node = { token : token; pos : int; len : int } [@@deriving show, eq]
 
 type token_result = Token of token_node | Eof | Invalid of int
 [@@deriving show, eq]
@@ -54,14 +26,14 @@ module Test_Helpers = struct
       % List.map
           ~f:
             (String.substr_replace_first ~pattern:"Lexer." ~with_:""
-            % show_token)
+            % Token.show)
     in
     let on_mismatch a b =
       printf "Expected: %s\nGot: %s\n" (show_token_list b) (show_token_list a)
     in
     match List.zip a b with
     | List.Or_unequal_lengths.Ok zipped ->
-        let equals = List.map zipped ~f:(uncurry equal_token) in
+        let equals = List.map zipped ~f:(uncurry Token.equal) in
         if List.for_all equals ~f:(fun x -> x) then ()
         else
           let () = on_mismatch a b in
@@ -124,16 +96,18 @@ let not' = char '!' Not
 let not_equal = string "!=" NotEqual
 let int' = take_while Char.is_digit (fun s -> Int (Int.of_string s))
 
-let check_keywords = function
-  | Ident "let" -> Let
-  | Ident "fn" -> Function
-  | Ident "for" -> For
-  | Ident "true" -> True
-  | Ident "false" -> False
-  | Ident "if" -> If
-  | Ident "else" -> Else
-  | Ident "return" -> Return
-  | x -> x
+let check_keywords =
+  Token.(
+    function
+    | Ident "let" -> Let
+    | Ident "fn" -> Function
+    | Ident "for" -> For
+    | Ident "true" -> True
+    | Ident "false" -> False
+    | Ident "if" -> If
+    | Ident "else" -> Else
+    | Ident "return" -> Return
+    | x -> x)
 
 let identifier =
   take_while
