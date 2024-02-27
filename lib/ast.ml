@@ -1,8 +1,8 @@
-type expression = Identifier of Token.t | Int of int [@@deriving show]
-type let_statement = { ident : string; value : expression } [@@deriving show]
+type expression = Identifier of Token.t | Int of int [@@deriving show, eq]
+type let_statement = { ident : string; value : expression } [@@deriving show, eq]
 
 type return_statement = { token : Token.t; value : expression }
-[@@deriving show]
+[@@deriving show, eq]
 
 type if_statement = {
   token : Token.t;
@@ -10,13 +10,13 @@ type if_statement = {
   consequence : statement list;
   alternative : statement list;
 }
-[@@deriving show]
+[@@deriving show, eq]
 
 and statement =
   | LetStatement of let_statement
   | ReturnStatement of return_statement
   | IfStatement of if_statement
-[@@deriving show]
+[@@deriving show, eq]
 
 type program = statement list
-[@@deriving show]
+[@@deriving show, eq]

@@ -1,5 +1,9 @@
+open Monkey
 open Monkey.Parser
 open Alcotest
+
+let pp_program ppf p = Format.fprintf ppf "%s" (Monkey.Ast.show_program p)
+let program_testable = Alcotest.testable pp_program Monkey.Ast.equal_program
 
 let simple_lets = {|
 let x = 5;
@@ -15,8 +19,13 @@ let test_simple_lets () =
     |> print_endline
   in
   let program = parse tokens in
-  let () = print_endline @@ Monkey.Ast.show_program program in
-  check bool "simple_lets" true true
+  (check program_testable) "simple_lets"
+    [
+      Ast.LetStatement { Ast.ident = "x"; value = Ast.Int 5 };
+      Ast.LetStatement { Ast.ident = "y"; value = Ast.Int 6 };
+      Ast.LetStatement { Ast.ident = "foobar"; value = Ast.Int 838383 };
+    ]
+    program
 
 let () =
   run "Parser Tests"
