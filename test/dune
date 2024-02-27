@@ -1,2 +1,3 @@
-(test
- (name writing_an_interpreter))
+(tests
+ (names writing_an_interpreter parser)
+ (libraries monkey alcotest))

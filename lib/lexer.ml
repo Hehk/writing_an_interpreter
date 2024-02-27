@@ -11,14 +11,14 @@ type token_result = Token of token_node | Eof | Invalid of int
 
 let ( % ) f g x = f (g x)
 
+let get_tokens nodes =
+  List.filter_map nodes ~f:(function
+    | Token t -> Some t.token
+    | Invalid _ -> raise (Invalid_argument "invalid token")
+    | Eof -> None)
+
 module Test_Helpers = struct
   let uncurry f (a, b) = f a b
-
-  let get_tokens nodes =
-    List.filter_map nodes ~f:(function
-      | Token t -> Some t.token
-      | Invalid _ -> raise (Invalid_argument "invalid token")
-      | Eof -> None)
 
   let compare_token_list a b =
     let show_token_list =
@@ -149,13 +149,13 @@ let lex code =
 
 let%test_unit "lex" =
   let code = "=+(){}" in
-  code |> lex |> Test_Helpers.get_tokens
+  code |> lex |> get_tokens
   |> Test_Helpers.compare_token_list
        [ Assign; Plus; Lparen; Rparen; Lbrace; Rbrace ]
 
 let%test_unit "lex operators" =
   let code = "!-/*5;\n5 < 10 > 5;" in
-  code |> lex |> Test_Helpers.get_tokens
+  code |> lex |> get_tokens
   |> Test_Helpers.compare_token_list
        [
          Not;
@@ -174,7 +174,7 @@ let%test_unit "lex operators" =
 
 let%test_unit "lex" =
   let code = "let forty = 40;" in
-  code |> lex |> Test_Helpers.get_tokens
+  code |> lex |> get_tokens
   |> Test_Helpers.compare_token_list
        [ Let; Ident "forty"; Assign; Int 40; Semicolon ]
 
@@ -186,7 +186,7 @@ let%test_unit "lex" =
       return true;
     }|}
   in
-  code |> lex |> Test_Helpers.get_tokens
+  code |> lex |> get_tokens
   |> Test_Helpers.compare_token_list
        [
          If;
