@@ -1,5 +1,5 @@
 type t =
-  | Ident of string
+  | Identifier of string
   | Int of int
   | Assign
   | Plus

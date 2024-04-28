@@ -99,20 +99,20 @@ let int' = take_while Char.is_digit (fun s -> Int (Int.of_string s))
 let check_keywords =
   Token.(
     function
-    | Ident "let" -> Let
-    | Ident "fn" -> Function
-    | Ident "for" -> For
-    | Ident "true" -> True
-    | Ident "false" -> False
-    | Ident "if" -> If
-    | Ident "else" -> Else
-    | Ident "return" -> Return
+    | Identifier "let" -> Let
+    | Identifier "fn" -> Function
+    | Identifier "for" -> For
+    | Identifier "true" -> True
+    | Identifier "false" -> False
+    | Identifier "if" -> If
+    | Identifier "else" -> Else
+    | Identifier "return" -> Return
     | x -> x)
 
 let identifier =
   take_while
     (fun c -> Char.is_alpha c || Char.is_digit c || Char.equal c '_')
-    (fun s -> Ident s)
+    (fun s -> Identifier s)
 
 let ( <|> ) a b s = match a s with None -> b s | x -> x
 let ( >>= ) a f s = match a s with None -> None | Some x -> f x
@@ -176,7 +176,7 @@ let%test_unit "lex" =
   let code = "let forty = 40;" in
   code |> lex |> get_tokens
   |> Test_Helpers.compare_token_list
-       [ Let; Ident "forty"; Assign; Int 40; Semicolon ]
+       [ Let; Identifier "forty"; Assign; Int 40; Semicolon ]
 
 let%test_unit "lex" =
   let code =
